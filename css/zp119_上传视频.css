@@ -6,6 +6,7 @@ module.exports=`
     position: relative;
     width: 152px;
     height: 152px;
+    color: rgb(81 81 81);
     border: 1px solid rgb(221, 221, 221);
     border-radius: 2px;
     display: inline-block;
@@ -15,7 +16,7 @@ module.exports=`
     overflow: hidden;
 }
 
-.zp119 input {
+.zp119input input {
     position: absolute;
     left: 0;
     top: 0;
@@ -34,6 +35,17 @@ module.exports=`
     bottom: 0px;
     right: 0px;
     margin: auto;
+}
+
+.zp119 span {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    cursor: pointer;
+    background: #e3e3e3;
+    border-top-right-radius: 7px;
+    padding: 2px;
+    z-index: 9;
 }
 
 .zp119 video {
@@ -102,6 +114,19 @@ module.exports=`
     background-color: rgba(0, 0, 0, .3);
     border-radius: 50%;
     color: #fff;
+}
+
+.zp119rm:hover {
+    background-color: rgba(0, 0, 0, .5);
+}
+
+.zp119 .zmodal {
+    width: 750px;
+    max-width: calc(100% - 8px);
+}
+
+.zp119 .zmodal input {
+    width: 100%;
 }
 
 .zdesktop .zp119rm {
