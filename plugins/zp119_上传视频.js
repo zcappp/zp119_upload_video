@@ -3,14 +3,13 @@ import css from "../css/zp119_上传视频.css"
 
 function render(ref) {
     if (!ref.props.dbf) return <div>{camera}<label>请配置表单字段</label></div>
-    let img = ref.getForm(ref.props.dbf)
-    if (img) img = img + "?x-oss-process=video/snapshot,m_fast,t_5000,w_0,ar_auto"
+    let video = ref.getForm(ref.props.dbf)
     return <React.Fragment>
         <div className="zp119input"><input onChange={e => onChange(ref, e)} type="file" accept="video/*"/></div>
-        {img || ref.progress ? <div>{ref.progress}</div> : <div>{camera}<label>{ref.props.label || "上传视频"}</label></div>}
-        {ref.video ? <video src={ref.video}/> : (img ? <img src={img}/> : "")}
-        {!!img && <i className="zplaybtn"/>}
-        {!!img && <svg onClick={e => {e.stopPropagation(); ref.setForm(ref.props.dbf, ""); ref.exc('render()')}} className="zp119rm zsvg" viewBox="64 64 896 896"><path d={remove}/></svg>}
+        {video || ref.progress ? <div>{ref.progress}</div> : <div>{camera}<label>{ref.props.label || "上传视频"}</label></div>}
+        {ref.video ? <video src={ref.video}/> : (video ? <img onClick={() => showVideo(ref, video)} src={video + "?x-oss-process=video/snapshot,m_fast,t_5000,w_0,ar_auto"}/> : "")}
+        {!!video && <i className="zplaybtn" onClick={() => showVideo(ref, video)}/>}
+        {!!video && <svg onClick={e => {e.stopPropagation(); ref.setForm(ref.props.dbf, ""); ref.exc('render()')}} className="zp119rm zsvg" viewBox="64 64 896 896"><path d={remove}/></svg>}
         {!!ref.props.url && <span onClick={() => url(ref)}>URL</span>}
         {ref.modal}
     </React.Fragment>
@@ -68,6 +67,19 @@ function url(ref) {
     </div>
     ref.render()
     setTimeout(() => $(".zp119 .zmodal input").focus(), 9)
+}
+
+function showVideo(ref, video) {
+    if (!video) return
+    ref.modal = <div className="zmodals">
+        <div className="zmask" onClick={() => close(ref)}/>
+        <div className="zmodal">
+            <svg onClick={() => close(ref)} className="zsvg" viewBox="64 64 896 896"><path d={remove}/></svg>
+            <div className="zmodal-hd">{ref.props.dbf}</div>
+            <div className="zcenter"><video src={video} preload="metadata" controls/></div>
+        </div>
+    </div>
+    ref.render()
 }
 
 function close(ref) {

@@ -28,16 +28,20 @@ module.exports=`
     font-size: 0;
 }
 
-.zp119 img {
+.zp119 > img {
     position: absolute;
     top: 0px;
     left: 0px;
     bottom: 0px;
     right: 0px;
+    z-index: 10;
+    cursor: pointer;
     margin: auto;
+    max-height: 100%;
+    max-width: 100%;
 }
 
-.zp119 span {
+.zp119 > span {
     position: absolute;
     left: 0;
     bottom: 0;
@@ -48,7 +52,7 @@ module.exports=`
     z-index: 9;
 }
 
-.zp119 video {
+.zp119 > video {
     position: absolute;
     height: 100%;
 }
@@ -128,14 +132,14 @@ module.exports=`
 .zp119 .zmodal input {
     width: 100%;
 }
-
+/*
 .zdesktop .zp119rm {
     display: none;
 }
 
 .zdesktop .zp119:hover .zp119rm {
     display: block;
-}
+}*/
 
 .zplaybtn {
     border: 18px solid rgb(64 64 64 / 70%);
@@ -148,6 +152,7 @@ module.exports=`
     position: absolute;
     top: 50%;
     margin: -18px 0 0 -18px;
+    z-index: 11;
 }
 
 .zplaybtn:before {
