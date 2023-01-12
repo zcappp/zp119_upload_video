@@ -24,7 +24,6 @@ module.exports=`
     height: 100%;
     opacity: 0;
     cursor: pointer;
-    z-index: 9;
     font-size: 0;
 }
 
@@ -34,7 +33,6 @@ module.exports=`
     left: 0px;
     bottom: 0px;
     right: 0px;
-    z-index: 10;
     cursor: pointer;
     margin: auto;
     max-height: 100%;
@@ -49,7 +47,7 @@ module.exports=`
     background: #e3e3e3;
     border-top-right-radius: 7px;
     padding: 2px;
-    z-index: 9;
+    font-size: 13px;
 }
 
 .zp119 > video {
@@ -75,10 +73,6 @@ module.exports=`
     cursor: pointer;
 }
 
-.zp119.uploading {
-    border-radius: 50%;
-}
-
 .zp119.uploading::after {
     content: '';
     position: absolute;
@@ -91,11 +85,10 @@ module.exports=`
     animation: loading 2s infinite linear;
 }
 
-.zp119.uploading > div {
+.zp119.uploading .zp119progress {
     position: absolute;
     top: 50%;
     left: 50%;
-    z-index: 9;
     text-align: center;
     transform: translate(-50%, -50%);
     color: rgb(255, 255, 255);
@@ -105,12 +98,10 @@ module.exports=`
 
 .zp119rm {
     position: absolute;
-    top: -8px;
-    right: -8px;
-    width: 54px;
-    z-index: 90;
+    top: -5px;
+    right: -5px;
+    z-index: 9;
     cursor: pointer;
-
     line-height: 9px;
     padding: 3px;
     width: 13px;

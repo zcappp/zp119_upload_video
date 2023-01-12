@@ -5,12 +5,13 @@ function render(ref) {
     if (!ref.props.dbf) return <div>{camera}<label>请配置表单字段</label></div>
     let video = ref.getForm(ref.props.dbf)
     return <React.Fragment>
+        {!video && !ref.video && <div>{camera}<label>{ref.props.label || "上传视频"}</label></div>}
         <div className="zp119input"><input onChange={e => onChange(ref, e)} type="file" accept="video/*"/></div>
-        {video || ref.progress ? <div>{ref.progress}</div> : <div>{camera}<label>{ref.props.label || "上传视频"}</label></div>}
-        {ref.video ? <video src={ref.video}/> : (video ? <img onClick={() => showVideo(ref, video)} src={video + "?x-oss-process=video/snapshot,m_fast,t_5000,w_0,ar_auto"}/> : "")}
-        {!!video && <i className="zplaybtn" onClick={() => showVideo(ref, video)}/>}
+        {!!ref.progress && <div className="zp119progress">{ref.progress}</div>}
+        {ref.video || (video && !video.endsWith("mp4")) ? <video src={ref.video}/> : (video ? <img onClick={() => popVideo(ref, video)} src={video + "?x-oss-process=video/snapshot,m_fast,t_5000,w_0,ar_auto"}/> : "")}
+        {!!video && <i className="zplaybtn" onClick={() => popVideo(ref, video)}/>}
         {!!video && <svg onClick={e => {e.stopPropagation(); ref.setForm(ref.props.dbf, ""); ref.exc('render()')}} className="zp119rm zsvg" viewBox="64 64 896 896"><path d={remove}/></svg>}
-        {!!ref.props.url && <span onClick={() => url(ref)}>URL</span>}
+        {!!ref.props.url && !ref.video && <span onClick={() => popUrl(ref)}>URL</span>}
         {ref.modal}
     </React.Fragment>
 }
@@ -52,7 +53,7 @@ function clean(ref) {
     ref.container.classList.remove("uploading")
 }
 
-function url(ref) {
+function popUrl(ref) {
     ref.modal = <div className="zmodals">
         <div className="zmask" onClick={() => close(ref)}/>
         <div className="zmodal">
@@ -69,7 +70,7 @@ function url(ref) {
     setTimeout(() => $(".zp119 .zmodal input").focus(), 9)
 }
 
-function showVideo(ref, video) {
+function popVideo(ref, video) {
     if (!video) return
     ref.modal = <div className="zmodals">
         <div className="zmask" onClick={() => close(ref)}/>
