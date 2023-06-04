@@ -9,7 +9,7 @@ module.exports=`
     color: rgb(81 81 81);
     border: 1px solid rgb(221, 221, 221);
     border-radius: 2px;
-    display: inline-block;
+    /*display: inline-block;*/
 }
 
 .zp119input {
