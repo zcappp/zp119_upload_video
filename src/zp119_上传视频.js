@@ -2,16 +2,18 @@ import React from "react"
 import css from "./zp119_上传视频.css"
 
 function render(ref) {
-    if (!ref.props.dbf) return <div>{camera}<label>请配置表单字段</label></div>
-    let video = ref.getForm(ref.props.dbf)
+    const { props, getForm } = ref
+    if (!getForm) return <div>{camera}<label>请置于表单容器中</label></div>
+    if (!props.dbf) return <div>{camera}<label>请配置表单字段</label></div>
+    let video = getForm(props.dbf)
     return <React.Fragment>
-        {!video && !ref.video && <div>{camera}<label>{ref.props.label || "上传视频"}</label></div>}
+        {!video && !ref.video && <div>{camera}<label>{props.label || "上传视频"}</label></div>}
         <div className="zp119input"><input onChange={e => onChange(ref, e)} type="file" accept="video/*"/></div>
         {!!ref.progress && <div className="zp119progress">{ref.progress}</div>}
         {ref.video || (video && !video.endsWith("mp4")) ? <video src={ref.video}/> : (video ? <img onClick={() => popVideo(ref, video)} src={video + "?x-oss-process=video/snapshot,m_fast,t_5000,w_0,ar_auto"}/> : "")}
         {!!video && <i className="zplaybtn" onClick={() => popVideo(ref, video)}/>}
-        {!!video && <svg onClick={e => {e.stopPropagation(); ref.setForm(ref.props.dbf, ""); ref.exc('render()')}} className="zp119rm zsvg" viewBox="64 64 896 896"><path d={remove}/></svg>}
-        {!!ref.props.url && !ref.video && <span onClick={() => popUrl(ref)}>URL</span>}
+        {!!video && <svg onClick={e => {e.stopPropagation(); ref.setForm(props.dbf, ""); ref.exc('render()')}} className="zp119rm zsvg" viewBox="64 64 896 896"><path d={remove}/></svg>}
+        {!!props.url && !ref.video && <span onClick={() => popUrl(ref)}>URL</span>}
         {ref.modal}
     </React.Fragment>
 }
@@ -89,7 +91,7 @@ function close(ref) {
 }
 
 function upload(ref) {
-    const { exc } = ref
+    const { props, exc } = ref
     let url = $(".zp119 .zmodal input").value
     if (!url) return exc('alert("请输入视频URL")')
     exc('info("正在上传，请稍候")')
@@ -97,8 +99,8 @@ function upload(ref) {
     exc('$resource.uploads(urls, "v")', { urls: [url] }, r => {
         if (!r || r.ng.length) exc(`alert("上传出错了", reason)`, { reason: r ? r.ng[0].reason : "" })
         if (r.arr.length) {
-            ref.setForm(ref.props.dbf, r.arr[0].url)
-            if (ref.props.onSuccess) exc(ref.props.onSuccess, { ...ref.ctx, $ext_ctx: ref.ctx, ...r.arr[0] }, () => exc("render()"))
+            ref.setForm(props.dbf, r.arr[0].url)
+            if (props.onSuccess) exc(props.onSuccess, { ...ref.ctx, $ext_ctx: ref.ctx, $val: r.arr[0].url, ...r.arr[0] }, () => exc("render()"))
             exc('render()')
         }
     })
@@ -113,7 +115,8 @@ $plugin({
     }, {
         prop: "onSuccess",
         type: "exp",
-        label: "onSuccess表达式"
+        label: "onSuccess表达式",
+        ph: "$val"
     }, {
         prop: "max",
         type: "number",
