@@ -60,11 +60,11 @@ function popUrl(ref) {
         <div className="zmask" onClick={() => close(ref)}/>
         <div className="zmodal">
             <svg onClick={() => close(ref)} className="zsvg" viewBox="64 64 896 896"><path d={remove}/></svg>
-            <div className="zmodal-hd">通过URL上传</div>
-            <div className="zmodal-bd"><input placeholder="输入视频URL" className="zinput"/></div>
-            <div className="zmodal-ft">
+            <div className="hd">通过URL上传</div>
+            <div className="bd"><input placeholder="输入视频URL" className="zinput"/></div>
+            <div className="ft">
                 <div className="zbtn" onClick={() => close(ref)}>取消</div>
-                <div className="zbtn zprimary" onClick={() => upload(ref)}>上传</div>
+                <div className="zbtn main" onClick={() => upload(ref)}>上传</div>
             </div>
         </div>
     </div>
@@ -78,7 +78,7 @@ function popVideo(ref, video) {
         <div className="zmask" onClick={() => close(ref)}/>
         <div className="zmodal">
             <svg onClick={() => close(ref)} className="zsvg" viewBox="64 64 896 896"><path d={remove}/></svg>
-            <div className="zmodal-hd">{ref.props.dbf}</div>
+            <div className="hd">{ref.props.dbf}</div>
             <div className="zcenter"><video src={video} preload="metadata" controls/></div>
         </div>
     </div>
