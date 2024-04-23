@@ -10,8 +10,8 @@ function render(ref) {
         {!video && !ref.video && <div>{camera}<label>{props.label || "上传视频"}</label></div>}
         <div className="zp119input"><input onChange={e => onChange(ref, e)} type="file" accept="video/*"/></div>
         {!!ref.progress && <div className="zp119progress">{ref.progress}</div>}
-        {ref.video || (video && !video.endsWith("mp4")) ? <video src={ref.video}/> : (video ? <img onClick={() => popVideo(ref, video)} src={video + "?x-oss-process=video/snapshot,m_fast,t_5000,w_0,ar_auto"}/> : "")}
-        {!!video && <i className="zplaybtn" onClick={() => popVideo(ref, video)}/>}
+        {ref.video || (video && !video.endsWith("mp4")) ? <video src={ref.video}/> : (video ? <img onClick={() => preview(ref, video)} src={video + "?x-oss-process=video/snapshot,m_fast,t_5000,w_0,ar_auto"}/> : "")}
+        {!!video && <i className="zplaybtn" onClick={() => preview(ref, video)}/>}
         {!!video && <svg onClick={e => {e.stopPropagation(); ref.setForm(props.dbf, ""); ref.exc('render()')}} className="zp119rm zsvg" viewBox="64 64 896 896"><path d={remove}/></svg>}
         {!!props.url && !ref.video && <span onClick={() => popUrl(ref)}>URL</span>}
         {ref.modal}
@@ -59,8 +59,8 @@ function popUrl(ref) {
     ref.modal = <div className="zmodals">
         <div className="zmask" onClick={() => close(ref)}/>
         <div className="zmodal">
-            <svg onClick={() => close(ref)} className="zsvg" viewBox="64 64 896 896"><path d={remove}/></svg>
-            <div className="hd">通过URL上传</div>
+            <svg onClick={() => close(ref)} className="zsvg x" viewBox="64 64 896 896"><path d={remove}/></svg>
+            <h3 className="hd">通过URL上传</h3>
             <div className="bd"><input placeholder="输入视频URL" className="zinput"/></div>
             <div className="ft">
                 <div className="zbtn" onClick={() => close(ref)}>取消</div>
@@ -69,20 +69,24 @@ function popUrl(ref) {
         </div>
     </div>
     ref.render()
-    setTimeout(() => $(".zp119 .zmodal input").focus(), 9)
+    setTimeout(() => {
+        $(".zp119 .zmodals").classList.add("open")
+        $(".zp119 .zmodal input").focus()
+    }, 99)
 }
 
-function popVideo(ref, video) {
+function preview(ref, video) {
     if (!video) return
     ref.modal = <div className="zmodals">
         <div className="zmask" onClick={() => close(ref)}/>
         <div className="zmodal">
-            <svg onClick={() => close(ref)} className="zsvg" viewBox="64 64 896 896"><path d={remove}/></svg>
-            <div className="hd">{ref.props.dbf}</div>
+            <svg onClick={() => close(ref)} className="zsvg x" viewBox="64 64 896 896"><path d={remove}/></svg>
+            <h3 className="hd">{ref.props.dbf}</h3>
             <div className="zcenter"><video src={video} preload="metadata" controls/></div>
         </div>
     </div>
     ref.render()
+    setTimeout(() => $(".zp119 .zmodals").classList.add("open"), 99)
 }
 
 function close(ref) {
