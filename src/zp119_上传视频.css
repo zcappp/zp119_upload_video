@@ -55,13 +55,18 @@ module.exports=`
     height: 100%;
 }
 
-.zp119camera {
+.zp119 .zvideo {
     position: absolute;
     top: 35%;
     left: 50%;
     transform: translate(-50%, -50%);
-    fill: rgba(0, 0, 0, 0.2);
-    width: 40%;
+    font-size: 2em;
+    padding: 0;
+    color: silver;
+}
+
+.zp119noLabel .zvideo {
+    top: 50%;
 }
 
 .zp119 label {
@@ -98,13 +103,11 @@ module.exports=`
 
 .zp119rm {
     position: absolute;
-    top: -5px;
-    right: -5px;
+    top: -3px;
+    right: -3px;
     z-index: 90;
     padding: 3px;
-    width: 8px;
-    height: 8px;
-    font-size: 9px;
+    font-size: .7em;
     background-color: rgba(0, 0, 0, .3);
     border-radius: 50%;
     color: #fff;

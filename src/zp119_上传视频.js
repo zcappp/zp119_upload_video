@@ -2,31 +2,36 @@ import React from "react"
 import css from "./zp119_上传视频.css"
 
 function render(ref) {
-    const { props, getForm } = ref
-    if (!getForm) return <div>{camera}<label>请置于表单容器中</label></div>
-    if (!props.dbf) return <div>{camera}<label>请配置表单字段</label></div>
-    let video = getForm(props.dbf)
+    let { props } = ref
+    let { dbf, form } = props
+    let video
+    if (form) {
+        ref.form = typeof form == "string" ? ref.excA(form) : form
+        if (typeof ref.form == "object") video = ref.form[dbf]
+    } else if (ref.getForm) {
+        video = ref.getForm(dbf)
+    }
     return <React.Fragment>
-        {!video && !ref.video && <div>{camera}<label>{props.label || "上传视频"}</label></div>}
         <div className="zp119input"><input onChange={e => onChange(ref, e)} type="file" accept="video/*"/></div>
-        {!!ref.progress && <div className="zp119progress">{ref.progress}</div>}
-        {ref.video || (video && !video.endsWith("mp4")) ? <video src={ref.video}/> : (video ? <img onClick={() => preview(ref, video)} src={video + "?x-oss-process=video/snapshot,m_fast,t_5000,w_0,ar_auto"}/> : "")}
+        {!video && !ref.file && <div className={props.noLabel ? "zp119noLabel" : ""}><span className="zvideo"><span/></span><label>{props.noLabel ? "" : (props.label || "上传视频")}</label></div>}
+        {ref.file || (video && !video.endsWith("mp4")) ? <video src={ref.file || video}/> : (video ? <img onClick={() => preview(ref, video)} src={video + "?x-oss-process=video/snapshot,m_fast,t_5000,w_0,ar_auto"}/> : "")}
         {!!video && <i className="zplaybtn" onClick={() => preview(ref, video)}/>}
-        {!!video && <i onClick={e => {e.stopPropagation(); ref.setForm(props.dbf, ""); ref.exc('render()')}} className="zdel zp119rm"/>}
-        {!!props.url && !ref.video && <span onClick={() => popUrl(ref)}>URL</span>}
+        {!!ref.file && <div className="zp119progress">{ref.progress}</div>}
+        {!!video && <i onClick={e => {e.stopPropagation(); ref.form ? delete ref.form[dbf] : ref.setForm(dbf, ""); ref.exc('render()')}} className="zp119rm zdel"/>}
+        {!!props.url && !ref.file && <span onClick={() => popUrl(ref)}>URL</span>}
         {ref.modal}
     </React.Fragment>
 }
 
 function onChange(ref, e) {
-    const { exc, container, props } = ref
+    const { exc, props } = ref
     const file = e.target.files[0]
     if (!file || !file.name) return exc('warn("请选择视频文件")')
     if (file.size / 1048576 > (ref.props.max || 900)) return exc(`warn("文件太大, 请压缩至${ref.props.max || 900}M以下")`)
-    ref.video = URL.createObjectURL(file)
+    ref.file = URL.createObjectURL(file)
     ref.progress = "0%"
     ref.render()
-    container.classList.add("uploading")
+    ref.container.classList.add("uploading")
     exc('upload(file, option)', {
         file,
         option: {
@@ -35,7 +40,7 @@ function onChange(ref, e) {
                 ref.render()
             },
             onSuccess: r => {
-                ref.setForm(props.dbf, r.url)
+                ref.form ? ref.form[props.dbf] = r.url : ref.setForm(props.dbf, r.url)
                 if (props.onSuccess) exc(props.onSuccess, { ...ref.ctx, $ext_ctx: ref.ctx, $val: r.url, ...r }, () => ref.exc("render()"))
                 clean(ref)
             },
@@ -48,8 +53,8 @@ function onChange(ref, e) {
 }
 
 function clean(ref) {
-    URL.revokeObjectURL(ref.video)
-    delete ref.video
+    URL.revokeObjectURL(ref.file)
+    delete ref.file
     delete ref.progress
     ref.render()
     ref.container.classList.remove("uploading")
@@ -103,9 +108,9 @@ function upload(ref) {
     exc('$resource.uploads(urls, "v")', { urls: [url] }, r => {
         if (!r || r.ng.length) exc(`alert("上传出错了", reason)`, { reason: r ? r.ng[0].reason : "" })
         if (r.arr.length) {
-            ref.setForm(props.dbf, r.arr[0].url)
-            if (props.onSuccess) exc(props.onSuccess, { ...ref.ctx, $ext_ctx: ref.ctx, $val: r.arr[0].url, ...r.arr[0] }, () => exc("render()"))
-            exc('render()')
+            const o = r.arr[0]
+            ref.form ? ref.form[props.dbf] = o.url : ref.setForm(props.dbf, o.url)
+            if (props.onSuccess) exc(props.onSuccess, { ...ref.ctx, $ext_ctx: ref.ctx, $val: o.url, ...o }, () => exc("render()"))
         }
     })
 }
@@ -114,29 +119,35 @@ $plugin({
     id: "zp119",
     props: [{
         prop: "dbf",
-        type: "text",
-        label: "表单字段"
+        label: "字段名",
+        ph: "必填"
     }, {
-        prop: "onSuccess",
-        type: "exp",
-        label: "onSuccess表达式",
-        ph: "$val"
+        prop: "form",
+        label: "字段容器",
+        ph: "如不填则使用祖先节点的表单容器"
     }, {
         prop: "max",
         type: "number",
         label: "最大文件大小(单位:MB)",
         ph: "默认最大900MB"
     }, {
+        prop: "noLabel",
+        type: "switch",
+        label: "不显示文本"
+    }, {
         prop: "label",
-        type: "text",
-        label: "[上传视频]文本"
+        label: "[上传视频] 文本",
+        show: "!P.noLabel"
     }, {
         prop: "url",
         type: "switch",
         label: "允许通过URL上传"
+    }, {
+        prop: "onSuccess",
+        type: "exp",
+        label: "上传成功表达式",
+        ph: "$val"
     }],
     render,
     css
 })
-
-const camera = <svg className="zsvg zp119camera" viewBox="64 64 896 896"><path d="M912 302.3L784 376V224c0-35.3-28.7-64-64-64H128c-35.3 0-64 28.7-64 64v576c0 35.3 28.7 64 64 64h592c35.3 0 64-28.7 64-64V648l128 73.7c21.3 12.3 48-3.1 48-27.6V330c0-24.6-26.7-40-48-27.7zM712 792H136V232h576v560zm176-167l-104-59.8V458.9L888 399v226zM208 360h112c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H208c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8z"/></svg>
