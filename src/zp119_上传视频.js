@@ -12,7 +12,7 @@ function render(ref) {
         video = ref.getForm(dbf)
     }
     return <React.Fragment>
-        <div className="zp119input"><input onChange={e => onChange(ref, e)} type="file" accept="video/*"/></div>
+        {!video && <div className="zp119input"><input onChange={e => onChange(ref, e)} type="file" accept="video/*"/></div>}
         {!video && !ref.file && <div className={props.noLabel ? "zp119noLabel" : ""}><span className="zvideo"><span/></span><label>{props.noLabel ? "" : (props.label || "上传视频")}</label></div>}
         {ref.file || (video && !video.endsWith("mp4")) ? <video src={ref.file || video}/> : (video ? <img onClick={() => preview(ref, video)} src={video + "?x-oss-process=video/snapshot,m_fast,t_5000,w_0,ar_auto"}/> : "")}
         {!!video && <i className="zplaybtn" onClick={() => preview(ref, video)}/>}
